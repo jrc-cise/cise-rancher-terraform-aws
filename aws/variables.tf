@@ -68,10 +68,14 @@ variable "rancher_server_admin_password" {
   description = "Admin password to use for Rancher server bootstrap"
 }
 
-# Required
 variable "server_subnet_id" {
   type        = string
   description = "Subnet id"
+}
+
+variable "server_vpc_id" {
+  type        = string
+  description = "VPC id"
 }
 
 # Local variables used to reduce repetition
