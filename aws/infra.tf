@@ -50,7 +50,8 @@ resource "aws_security_group" "rancher_sg_allowall" {
 resource "aws_instance" "rancher_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-
+  subnet_id = var.server_subnet_id
+  associate_public_ip_address = false
   key_name        = aws_key_pair.quickstart_key_pair.key_name
   security_groups = [aws_security_group.rancher_sg_allowall.name]
 
