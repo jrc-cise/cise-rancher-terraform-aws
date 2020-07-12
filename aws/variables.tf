@@ -78,11 +78,6 @@ variable "server_vpc_id" {
   description = "VPC id"
 }
 
-variable "path_private_key" {
-  type        = string
-  description = "Path to the private key file"
-}
-
 # Local variables used to reduce repetition
 locals {
   node_username = "ubuntu"
