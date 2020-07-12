@@ -1,18 +1,18 @@
 # AWS infrastructure resources
 
-resource "tls_private_key" "global_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
+#resource "tls_private_key" "global_key" {
+#  algorithm = "RSA"
+#  rsa_bits  = 2048
+#}
 
 resource "local_file" "ssh_private_key_pem" {
-  filename          = "${path.module}/id_rsa"
+  filename          = var.path_private_key
   sensitive_content = tls_private_key.global_key.private_key_pem
   file_permission   = "0600"
 }
 
 resource "local_file" "ssh_public_key_openssh" {
-  filename = "${path.module}/id_rsa.pub"
+  filename = "${var.path_private_key}.pub"
   content  = tls_private_key.global_key.public_key_openssh
 }
 
@@ -27,7 +27,7 @@ resource "aws_security_group" "rancher_sg_allowall" {
   name        = "${var.prefix}-rancher-allowall"
   description = "Rancher quickstart - allow all traffic"
   vpc_id      = var.server_vpc_id
-  
+
   ingress {
     from_port   = "0"
     to_port     = "0"
@@ -53,8 +53,9 @@ resource "aws_instance" "rancher_server" {
   instance_type = var.instance_type
   subnet_id     = var.server_subnet_id
   associate_public_ip_address = false
+
   key_name        = aws_key_pair.quickstart_key_pair.key_name
-  security_groups = [aws_security_group.rancher_sg_allowall.name]
+  security_groups = [aws_security_group.rancher_sg_allowall.id]
 
   user_data = templatefile(
     join("/", [path.module, "../cloud-common/files/userdata_rancher_server.template"]),
@@ -116,7 +117,7 @@ resource "aws_instance" "quickstart_node" {
   instance_type = var.instance_type
   subnet_id     = var.server_subnet_id
   key_name        = aws_key_pair.quickstart_key_pair.key_name
-  security_groups = [aws_security_group.rancher_sg_allowall.name]
+  security_groups = [aws_security_group.rancher_sg_allowall.id]
 
   user_data = templatefile(
     join("/", [path.module, "files/userdata_quickstart_node.template"]),
