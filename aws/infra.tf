@@ -1,31 +1,33 @@
 # AWS infrastructure resources
 
-resource "tls_private_key" "global_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
+# resource "tls_private_key" "global_key" {
+#   algorithm = "RSA"
+#   rsa_bits  = 2048
+# }
 
-resource "local_file" "ssh_private_key_pem" {
-  filename          = "${path.module}/id_rsa"
-  sensitive_content = tls_private_key.global_key.private_key_pem
-  file_permission   = "0600"
-}
+# resource "local_file" "ssh_private_key_pem" {
+#   filename          = "${path.module}/id_rsa"
+#   sensitive_content = tls_private_key.global_key.private_key_pem
+#   file_permission   = "0600"
+# }
 
-resource "local_file" "ssh_public_key_openssh" {
-  filename = "${path.module}/id_rsa.pub"
-  content  = tls_private_key.global_key.public_key_openssh
-}
+# resource "local_file" "ssh_public_key_openssh" {
+#   filename = "${path.module}/id_rsa.pub"
+#   content  = tls_private_key.global_key.public_key_openssh
+# }
 
 # Temporary key pair used for SSH accesss
 resource "aws_key_pair" "quickstart_key_pair" {
   key_name_prefix = "${var.prefix}-rancher-"
-  public_key      = tls_private_key.global_key.public_key_openssh
+  public_key      = "${file("~/.ssh/id_rsa_aws.pub")}"
 }
 
+# TODO: SThe security group is too open: it should be configured to
+# open only the needed ports
 # Security group to allow all traffic
 resource "aws_security_group" "rancher_sg_allowall" {
   name        = "${var.prefix}-rancher-allowall"
-  description = "Rancher quickstart - allow all traffic"
+  description = "Rancher - allow all traffic"
   vpc_id      = var.server_vpc_id
 
   ingress {
@@ -52,7 +54,7 @@ resource "aws_instance" "rancher_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   subnet_id     = var.server_subnet_id
-  associate_public_ip_address = false
+  associate_public_ip_address = true
 
   key_name        = aws_key_pair.quickstart_key_pair.key_name
   security_groups = [aws_security_group.rancher_sg_allowall.id]
@@ -76,11 +78,12 @@ resource "aws_instance" "rancher_server" {
       "echo 'Completed cloud-init!'",
     ]
 
+    # The connection in our case is public 
     connection {
       type        = "ssh"
       host        = self.public_ip
       user        = local.node_username
-      private_key = tls_private_key.global_key.private_key_pem
+      private_key = "${file("~/.ssh/id_rsa_aws")}"
     }
   }
 
@@ -97,7 +100,7 @@ module "rancher_common" {
   node_public_ip         = aws_instance.rancher_server.public_ip
   node_internal_ip       = aws_instance.rancher_server.private_ip
   node_username          = local.node_username
-  ssh_private_key_pem    = tls_private_key.global_key.private_key_pem
+  ssh_private_key_pem    = "${file("~/.ssh/id_rsa_aws")}"
   rke_kubernetes_version = var.rke_kubernetes_version
 
   cert_manager_version = var.cert_manager_version
@@ -139,7 +142,7 @@ resource "aws_instance" "quickstart_node" {
       type        = "ssh"
       host        = self.public_ip
       user        = local.node_username
-      private_key = tls_private_key.global_key.private_key_pem
+      private_key = "${file("~/.ssh/id_rsa_aws")}"
     }
   }
 
