@@ -78,6 +78,11 @@ variable "server_vpc_id" {
   description = "VPC id"
 }
 
+variable "existing_key_name" {
+  type        = string
+  description = "Path with filename of the existing public key to be used"
+}
+
 # Local variables used to reduce repetition
 locals {
   node_username = "ubuntu"
