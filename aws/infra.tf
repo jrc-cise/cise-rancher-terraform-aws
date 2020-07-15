@@ -16,7 +16,7 @@ resource "local_file" "ssh_public_key_openssh" {
 }
 
 # Temporary key pair used for SSH accesss
-resource "aws_key_pair" "quickstart_key_pair" {
+resource "aws_key_pair" "cise_key_pair" {
   key_name_prefix = "${var.prefix}-rancher-"
   public_key      = tls_private_key.global_key.public_key_openssh
 }
@@ -44,7 +44,7 @@ resource "aws_security_group" "rancher_sg_allowall" {
   }
 
   tags = {
-    Creator = "rancher-quickstart"
+    Creator = "rancher-cise"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_instance" "rancher_server" {
   subnet_id     = var.server_subnet_id
   associate_public_ip_address = true
 
-  key_name      = aws_key_pair.quickstart_key_pair.id
+  key_name      = aws_key_pair.cise_key_pair.id
   security_groups = [aws_security_group.rancher_sg_allowall.id]
 
   user_data = templatefile(
@@ -88,7 +88,7 @@ resource "aws_instance" "rancher_server" {
 
   tags = {
     Name    = "${var.prefix}-rancher-server"
-    Creator = "rancher-quickstart"
+    Creator = "rancher-cise"
   }
 }
 
@@ -110,15 +110,15 @@ module "rancher_common" {
   admin_password     = var.rancher_server_admin_password
 
   workload_kubernetes_version = var.workload_kubernetes_version
-  workload_cluster_name       = "quickstart-aws-custom"
+  workload_cluster_name       = "cluster-01"
 }
 
 # AWS EC2 instance for creating a single node workload cluster
-resource "aws_instance" "quickstart_node" {
+resource "aws_instance" "cise_node" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   subnet_id     = var.server_subnet_id
-  key_name      = aws_key_pair.quickstart_key_pair.id
+  key_name      = aws_key_pair.cise_key_pair.id
   associate_public_ip_address = true
   security_groups = [aws_security_group.rancher_sg_allowall.id]
 
@@ -147,7 +147,7 @@ resource "aws_instance" "quickstart_node" {
   }
 
   tags = {
-    Name    = "${var.prefix}-quickstart-node"
-    Creator = "rancher-quickstart"
+    Name    = "${var.prefix}-cise-node"
+    Creator = "rancher-cise"
   }
 }

@@ -12,12 +12,12 @@ resource "rancher2_bootstrap" "admin" {
   telemetry = true
 }
 
-# Create custom managed cluster for quickstart
-resource "rancher2_cluster" "quickstart_workload" {
+# Create custom managed cluster for cise
+resource "rancher2_cluster" "cise_workload" {
   provider = rancher2.admin
 
   name        = var.workload_cluster_name
-  description = "Custom workload cluster created by Rancher quickstart"
+  description = "Custom workload cluster created by the Terraform script."
 
   rke_config {
     network {
