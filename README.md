@@ -1,39 +1,14 @@
 # Terraform script to install Rancher on aws for CISE
 
-Quickly stand up an HA-style Rancher management server in your infrastructure provider of choice.
+Quickly stand up an HA-style Rancher management server on aws.
 
-Intended for experimentation/evaluation ONLY.
-
-**You will be responsible for any and all infrastructure costs incurred by these resources.**
 As a result, this repository minimizes costs by standing up the minimum required resources for a given provider.
-Use Vagrant to run Rancher locally and avoid cloud costs.
 
-## Local quickstart
+## AWS
 
-A local quickstart is provided in the form of Vagrant configuration.
+[**Amazon Web Services** (`aws`)](./aws)
 
-**The Vagrant quickstart does not currently follow Rancher best practices for installing a Rancher manangement server.**
-Use this configuration only to evaluate the features of Rancher.
-See cloud provider quickstarts for an HA foundation according to Rancher installtion best practices.
-
-### Requirements - Vagrant (local)
-
-- [Vagrant](https://www.vagrantup.com)
-- [VirtualBox](https://www.virtualbox.org)
-- 6GB unused RAM
-
-### Using Vagrant quickstart
-
-See [/vagrant](./vagrant) for details on usage and settings.
-
-
-## Cloud quickstart
-
-Quickstarts are provided for [**Amazon Web Services** (`aws`)](./aws), [**Microsoft Azure Cloud** (`azure`)](./azure), [**Microsoft Azure Cloud with Windows nodes** (`azure-windows`)](./azure-windows), [**DigitalOcean** (`do`)](./do), and [**Google Cloud Platform** (`gcp`)](./gcp).
-
-**You will be responsible for any and all infrastructure costs incurred by these resources.**
-
-Each quickstart will install Rancher on a single-node RKE cluster, then will provision another single-node workload cluster using a Custom cluster in Rancher.
+AWS scripts will install Rancher on a single-node RKE cluster, then will provision another single-node workload cluster using a Custom cluster in Rancher.
 This setup provides easy access to the core Rancher functionality while establishing a foundation that can be easily expanded to a full HA Rancher server.
 
 ### Requirements - Cloud
