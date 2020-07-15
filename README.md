@@ -1,4 +1,4 @@
-# Quickstart examples for Rancher
+# Terraform script to install Rancher on aws for CISE
 
 Quickly stand up an HA-style Rancher management server in your infrastructure provider of choice.
 
